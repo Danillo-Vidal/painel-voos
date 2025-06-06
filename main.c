@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 typedef struct Voo{
     char cia[20];
@@ -15,6 +16,17 @@ typedef struct Voo{
 
 Voo* lista = NULL;
 
+// Função para encontrar voo pelo número
+Voo* buscarVoo(int numero) {
+        Voo* temp = lista;
+        while (temp != NULL) {
+            if (temp->numero == numero)
+                return temp;
+            temp = temp->prox;
+        }
+        return NULL;
+}
+
 void inserirVoo() {
     Voo* novo = (Voo*)malloc(sizeof(Voo));
     if (!novo) {
@@ -24,28 +36,63 @@ void inserirVoo() {
 
     while (getchar() != '\n' && getchar() != EOF);  // Limpa qualquer sujeira anterior e ajuda na quebra de linha
 
-
     printf("Cia: ");
     fgets(novo->cia, sizeof(novo->cia), stdin);
     novo->cia[strcspn(novo->cia, "\n")] = 0;
+    // Converter para CAIXA ALTA:
+    for (int i = 0; novo->cia[i] != '\0'; i++) {
+        novo->cia[i] = toupper(novo->cia[i]);
+    }
 
-    printf("Número do Voo: ");
-    scanf("%d", &novo->numero);
-    while (getchar() != '\n');
 
-    printf("Horário Previsto (HH:MM): ");
-    scanf("%s", novo->horarioPrevisto);
-    while (getchar() != '\n');
+    //Número do Voo: 
+    do {
+        printf("Número do Voo: ");
+        if (scanf("%d", &novo->numero) != 1 || novo->numero < 0) {
+            printf("Erro: Número inválido. Insira um número positivo.\n");
+            while (getchar() != '\n');
+        } else if (buscarVoo(novo->numero)) {
+            printf("Erro: Já existe um voo com esse número. Insira outro número.\n");
+            while (getchar() != '\n');
+        } else {
+            while (getchar() != '\n');
+            break;
+        }
+    } while (1);
+
+    //Horário Previsto (HH:MM):
+    int hora,minuto;
+    char temp[10];
+    do{
+        printf("Horário Previsto (HH:MM): ");
+        fgets(temp, sizeof(temp), stdin);
+
+    if (sscanf(temp, "%2d:%2d", &hora, &minuto) != 2 ||
+        hora < 0 || hora > 23 || minuto < 0 || minuto > 59) {
+        printf("Erro: Formato inválido. Use HH:MM (ex: 08:30).\n");
+    } else {
+        sprintf(novo->horarioPrevisto, "%02d:%02d", hora, minuto);
+        break;
+    }
+    }while(1);
 
     printf("Destino: ");
     fgets(novo->destino, sizeof(novo->destino), stdin);
     novo->destino[strcspn(novo->destino, "\n")] = 0;
+    // Converter para CAIXA ALTA:
+    for (int i = 0; novo->destino[i] != '\0'; i++) {
+        novo->destino[i] = toupper(novo->destino[i]);
+    }
 
     printf("Portão: ");
     fgets(novo->portao, sizeof(novo->portao), stdin);
     novo->portao[strcspn(novo->portao, "\n")] = 0;
+    // Converter para CAIXA ALTA:
+    for (int i = 0; novo->portao[i] != '\0'; i++) {
+        novo->portao[i] = toupper(novo->portao[i]);
+    }
 
-    strcpy(novo->status, "Previsto");
+    strcpy(novo->status, "PREVISTO");
 
     novo->prox = NULL;
 
@@ -110,22 +157,14 @@ void mostrarVoos(){
     printf("\n");
 }
 
-// Função para encontrar voo pelo número
-Voo* buscarVoo(int numero) {
-    Voo* temp = lista;
-    while (temp != NULL) {
-        if (temp->numero == numero)
-            return temp;
-        temp = temp->prox;
-    }
-    return NULL;
-}
+
 
 // Função para excluir voo pelo número
 void excluirVoo() {
     int numero;
     printf("Número do Vôo para excluir: ");
     scanf("%d", &numero);
+    while (getchar() != '\n');  // Limpa
 
     Voo* atual = lista;
     Voo* anterior = NULL;
@@ -156,6 +195,8 @@ void cancelarVoo() {
     int numero;
     printf("Número do Vôo para cancelar: ");
     scanf("%d", &numero);
+    // Limpa o buffer
+    while (getchar() != '\n');
 
     Voo* voo = buscarVoo(numero);
     if (voo == NULL) {
@@ -173,6 +214,8 @@ void atualizarVoo() {
     char novoStatus[20];
     printf("Número do Vôo para atualizar: ");
     scanf("%d", &numero);
+    // Limpa o buffer
+    while (getchar() != '\n');
 
     Voo* voo = buscarVoo(numero);
     if (voo == NULL) {
@@ -181,6 +224,7 @@ void atualizarVoo() {
     }
 
     int opcao;
+    int hora, minuto;
     do {
         printf("\nQual campo você deseja atualizar?\n");
         printf("1 - Cia\n");
@@ -198,13 +242,25 @@ void atualizarVoo() {
                 printf("Nova Cia: ");
                 fgets(voo->cia, sizeof(voo->cia), stdin);
                 voo->cia[strcspn(voo->cia, "\n")] = 0;
+                for (int i = 0; voo->cia[i] != '\0'; i++) {
+                    voo->cia[i] = toupper(voo->cia[i]);
+                }
                 printf("Cia atualizada com sucesso.\n");
                 break;
 
             case 2:
+            do{
                 printf("Novo horário (HH:MM): ");
-                scanf("%s", voo->horarioPrevisto);
-                while (getchar() != '\n');
+                    if (scanf("%2d:%2d", &hora, &minuto) != 2 ||
+                        hora < 0 || hora > 23 || minuto < 0 || minuto > 59) {
+                        printf("Erro: Formato inválido. Use HH:MM (ex: 08:30).\n");
+                        while (getchar() != '\n');
+                    } else {
+                        sprintf(voo->horarioPrevisto, "%02d:%02d", hora, minuto);
+                        while (getchar() != '\n');
+                        break;
+                    }
+            }while(1);
 
                 // Remover o voo da lista (sem dar free)
                 if (lista == voo) {
@@ -258,6 +314,8 @@ void atualizarVoo() {
                         atual->prox = voo;
                     }
                 }
+
+            
             printf("Horário atualizado com sucesso.\n");
             break;
 
@@ -265,6 +323,11 @@ void atualizarVoo() {
                 printf("Novo destino: ");
                 fgets(voo->destino, sizeof(voo->destino), stdin);
                 voo->destino[strcspn(voo->destino, "\n")] = 0;
+
+                for (int i = 0; voo->destino[i] != '\0'; i++) {
+                    voo->destino[i] = toupper(voo->destino[i]);
+                }
+
                 printf("Destino atualizado com sucesso.\n");
                 break;
 
@@ -272,6 +335,9 @@ void atualizarVoo() {
                 printf("Novo portão: ");
                 fgets(voo->portao, sizeof(voo->portao), stdin);
                 voo->portao[strcspn(voo->portao, "\n")] = 0;
+                for (int i = 0; voo->portao[i] != '\0'; i++) {
+                    voo->portao[i] = toupper(voo->portao[i]);
+                }
                 printf("Portão atualizado com sucesso.\n");
                 break;
 
@@ -279,6 +345,12 @@ void atualizarVoo() {
                 printf("Novo status: ");
                 fgets(voo->status, sizeof(voo->status), stdin);
                 voo->status[strcspn(voo->status, "\n")] = 0;
+                
+                // Converter para CAIXA ALTA:
+                for (int i = 0; voo->status[i] != '\0'; i++) {
+                    voo->status[i] = toupper(voo->status[i]);
+                }
+
                 printf("Status atualizado com sucesso.\n");
                 break;
 
@@ -297,6 +369,8 @@ void embarcarVoo() {
     int numero;
     printf("Número do Vôo para embarcar: ");
     scanf("%d", &numero);
+    // Limpa o buffer
+    while (getchar() != '\n');
 
     Voo* voo = buscarVoo(numero);
     if (voo == NULL) {
@@ -304,7 +378,7 @@ void embarcarVoo() {
         return;
     }
 
-    strcpy(voo->status, "Embarq Imediato");
+    strcpy(voo->status, "EMBARQ IMEDIATO");
     printf("Voo atualizado para Embarq Imediato.\n");
 }
 
@@ -323,6 +397,9 @@ void menu() {
         printf("0 - Sair\n");
         printf("Escolha uma opção: ");
         scanf("%d", &opcao);
+
+        // Limpa o buffer
+        while (getchar() != '\n');
 
         switch(opcao) {
             case 1:
