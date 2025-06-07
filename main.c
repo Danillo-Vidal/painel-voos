@@ -199,7 +199,7 @@ void mostrarVoos(){
 
     Voo* atual = lista;
     while(atual != NULL){
-        printf("%-10s| %-6d| %-6s| %-23s| %-7s| %-15s\n", 
+        printf("%-10s| %-6d| %-6s| %-24s| %-7s| %-15s\n", 
                atual->cia, atual->numero, atual->horarioPrevisto, atual->destino, atual->portao, atual->status);
         atual = atual->prox;
     }
