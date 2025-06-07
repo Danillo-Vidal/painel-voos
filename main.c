@@ -318,6 +318,7 @@ void atualizarVoo() {
 
                 } while (!valido);
             }
+            break;
 
 
             case 2:
@@ -423,7 +424,7 @@ void atualizarVoo() {
 
                     } while (!valido);
             }
-                    break;
+            break;
 
             case 4:
                 printf("Novo portão: ");
@@ -478,6 +479,7 @@ void atualizarVoo() {
 
             default:
                 printf("Opção inválida. Tente novamente.\n");
+                break;
         }
 
     } while (opcao != 0);
@@ -496,8 +498,8 @@ void embarcarVoo() {
         return;
     }
 
-    strcpy(voo->status, "EMBARQ IMEDIATO");
-    printf("Voo atualizado para Embarq Imediato.\n");
+    strcpy(voo->status, "EMBARQUE IMEDIATO");
+    printf("Voo atualizado para Embarque Imediato.\n");
 }
 
 // Função do menu principal
