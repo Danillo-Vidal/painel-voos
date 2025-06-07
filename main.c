@@ -512,6 +512,7 @@ void menu() {
         printf("3 - Cancelar Vôo\n");
         printf("4 - Atualizar Vôo\n");
         printf("5 - Embarcar Vôo\n");
+        printf("6 - Mostrar painel de Vôo\n");
         printf("0 - Sair\n");
         // Limpa o buffer antes de ler a opção do menu
         while (getchar() != '\n' && getchar() != EOF);
@@ -519,7 +520,7 @@ void menu() {
         printf("Escolha uma opção: ");
 
         if (scanf("%d", &opcao) != 1) {
-            printf("Opção inválida. Digite um número de 0 a 5.\n");
+            printf("Opção inválida. Digite um número de 0 a 6.\n");
             opcao = -1; // Força a repetir o menu
         }
 
@@ -541,6 +542,9 @@ void menu() {
                 break;
             case 5:
                 embarcarVoo();
+                break;
+            case 6:
+                mostrarVoos();
                 break;
             case 0:
                 printf("Saindo...\n");
