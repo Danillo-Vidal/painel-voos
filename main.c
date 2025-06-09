@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <windows.h>
 
 typedef struct Voo{
     char cia[20];
@@ -560,6 +561,7 @@ void menu() {
 }
 
 int main() {
+    SetConsoleOutputCP(CP_UTF8);
     menu();
     return 0;
 }
